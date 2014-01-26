@@ -1,0 +1,2 @@
+class SumoSmallMidBossSetup extends SumoMidBossSetup;
+
