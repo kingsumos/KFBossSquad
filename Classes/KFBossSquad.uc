@@ -702,9 +702,9 @@ function Mutate( string MutateString, PlayerController Sender )
     // Allow admin or listen server host execute these commands.
     if( Sender.PlayerReplicationInfo.bAdmin || Sender.PlayerReplicationInfo.bSilentAdmin || Viewport(Sender.Player)!=None )
     {
-        if( MutateString~="ZVHelp" )
+        if( MutateString~="Help" )
         {
-            Sender.ClientMessage("=== ZombieVolume commands ===");
+            Sender.ClientMessage("=== KFBossSquad commands ===");
             Sender.ClientMessage("ListMonsters <optional-filter>: list of monster ID's");
             Sender.ClientMessage("SpawnMonster <id-number>: spawn monster by ID");
             Sender.ClientMessage("MakeBig: ");
