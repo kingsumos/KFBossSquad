@@ -4,6 +4,8 @@ class KFBossSquad extends Mutator
 var config array<string> LargeMaps;
 var config int NumPlayersScaleLock; // Scales the health of monsters by up to X players.
 var config bool bDebug;
+var config string SpawnFx;
+var config bool bEnableSpawnFx;
 
 var BSGameType GT;
 var array<KFMonster> PendingMonsters;
@@ -53,6 +55,10 @@ function PostBeginPlay()
     // Init monster arrays
     InitMonsters();
 
+    // Init spawn effects
+	if (bEnableSpawnFx)
+	    InitSpawnFx();
+
     // Add additional serverpackages
     for( i=0; i<AddedServerPackages.Length; i++ )
         AddToPackageMap(string(AddedServerPackages[i]));
@@ -60,6 +66,21 @@ function PostBeginPlay()
 
     // Start timer
     SetTimer(1, True);
+}
+
+function InitSpawnFx()
+{
+    local Class<SumoSpawnFx> SpawnFxClass;
+
+    SpawnFxClass = Class<SumoSpawnFx>(DynamicLoadObject(Class'KFBossSquad'.Default.SpawnFx,Class'Class'));
+	if( SpawnFxClass==None )
+	{
+		log("FATAL ERROR: SpawnFx '"$Class'KFBossSquad'.Default.SpawnFx$"' not found");
+		log("Check KFBossSquad.ini -> [KFBossSquad.KFBossSquad] -> SpawnFx"); 
+		ConsoleCommand("exit");
+	}
+
+    ImplementPackage(SpawnFxClass);
 }
 
 final function ImplementPackage( Object O )
@@ -710,9 +731,9 @@ function Mutate( string MutateString, PlayerController Sender )
             Sender.ClientMessage("MakeBig: ");
             Sender.ClientMessage("MakeLarge: ");
         }
-        else if( Left(MutateString,11)~="ListMonsters " )
+        else if( Left(MutateString,13)~="ListMonsters " )
         {
-            ZVListZeds(Sender,Mid(MutateString,11));
+            ZVListZeds(Sender,Mid(MutateString,13));
             return;
         }
         else if( MutateString~="ListMonsters" )
@@ -720,9 +741,9 @@ function Mutate( string MutateString, PlayerController Sender )
             ZVListZeds(Sender, "");
             return;
         }
-        else if( Left(MutateString,9)~="SpawnMonster " )
+        else if( Left(MutateString,13)~="SpawnMonster " )
         {
-            ZVSummon(Sender,int(Mid(MutateString,9)));
+            ZVSummon(Sender,int(Mid(MutateString,13)));
             return;
         }
         else if( MutateString~="MakeBig" || MutateString~="MakeLarge" )
@@ -921,6 +942,8 @@ defaultproperties
 {
     bDebug=False
     NumPlayersScaleLock=10
+    SpawnFx="KFBossSquadSpawnFx.BossDemonSpawnEx"
+    bEnableSpawnFx=False
 
     GroupName="KFBossSquad"
     FriendlyName="KFBossSquad"

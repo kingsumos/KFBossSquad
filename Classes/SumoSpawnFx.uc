@@ -1,4 +1,7 @@
-class DoomEmitter extends Emitter;
+class SumoSpawnFx extends Emitter;
+
+var SumoSPMonster MO;
+var bool bNotifyGame;
 
 defaultproperties
 {
@@ -6,3 +9,4 @@ defaultproperties
      bNoDelete=False
      bNotOnDedServer=False
 }
+

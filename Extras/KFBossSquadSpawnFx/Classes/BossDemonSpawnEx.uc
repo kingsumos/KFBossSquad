@@ -1,8 +1,5 @@
 class BossDemonSpawnEx extends DemonSpawnBase;
 
-var SumoSPMonster MO;
-var bool bNotifyGame;
-
 simulated function PostBeginPlay()
 {
 	if( Level.NetMode!=NM_DedicatedServer )
@@ -67,7 +64,7 @@ defaultproperties
          StartVelocityRange=(Z=(Min=1.000000,Max=5.000000))
          VelocityScale(1)=(RelativeTime=1.000000,RelativeVelocity=(X=10.000000,Y=10.000000,Z=500.000000))
      End Object
-     Emitters(0)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter0'
+     Emitters(0)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter0'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter1
          UseDirectionAs=PTDU_Normal
@@ -92,7 +89,7 @@ defaultproperties
          LifetimeRange=(Min=1.000000,Max=1.500000)
          InitialDelayRange=(Min=3.000000,Max=3.000000)
      End Object
-     Emitters(1)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter1'
+     Emitters(1)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter1'
 
      Begin Object Class=BeamEmitter Name=BeamEmitter0
          BeamDistanceRange=(Min=100.000000,Max=200.000000)
@@ -122,7 +119,7 @@ defaultproperties
          InitialDelayRange=(Min=3.000000,Max=3.000000)
          StartVelocityRange=(Z=(Min=-1650.000000,Max=-1650.000000))
      End Object
-     Emitters(2)=BeamEmitter'KFBossSquad.BossDemonSpawnEx.BeamEmitter0'
+     Emitters(2)=BeamEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.BeamEmitter0'
 
      Begin Object Class=BeamEmitter Name=BeamEmitter1
          BeamDistanceRange=(Min=200.000000,Max=300.000000)
@@ -148,7 +145,7 @@ defaultproperties
          LifetimeRange=(Min=1.000000,Max=1.000000)
          InitialDelayRange=(Min=2.700000,Max=2.700000)
      End Object
-     Emitters(3)=BeamEmitter'KFBossSquad.BossDemonSpawnEx.BeamEmitter1'
+     Emitters(3)=BeamEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.BeamEmitter1'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter2
          UseColorScale=True
@@ -176,7 +173,7 @@ defaultproperties
          TextureVSubdivisions=1
          LifetimeRange=(Max=5.000000)
      End Object
-     Emitters(4)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter2'
+     Emitters(4)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter2'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter3
          FadeOut=True
@@ -197,7 +194,7 @@ defaultproperties
          LifetimeRange=(Min=0.500000,Max=0.500000)
          InitialDelayRange=(Min=2.900000,Max=2.900000)
      End Object
-     Emitters(5)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter3'
+     Emitters(5)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter3'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter4
          UseColorScale=True
@@ -221,7 +218,7 @@ defaultproperties
          Texture=Texture'2009DoomMonstersTex.Effects.Flare1'
          LifetimeRange=(Min=1.800000,Max=1.800000)
      End Object
-     Emitters(6)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter4'
+     Emitters(6)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter4'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter5
          FadeOut=True
@@ -245,7 +242,7 @@ defaultproperties
          LifetimeRange=(Min=1.000000,Max=1.000000)
          InitialDelayRange=(Min=2.800000,Max=2.800000)
      End Object
-     Emitters(7)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter5'
+     Emitters(7)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter5'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter6
          UseColorScale=True
@@ -267,7 +264,7 @@ defaultproperties
          LifetimeRange=(Min=0.500000,Max=1.000000)
          InitialDelayRange=(Min=2.600000,Max=2.600000)
      End Object
-     Emitters(8)=SpriteEmitter'KFBossSquad.BossDemonSpawnEx.SpriteEmitter6'
+     Emitters(8)=SpriteEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.SpriteEmitter6'
 
      Begin Object Class=MeshEmitter Name=MeshEmitter0
          StaticMesh=StaticMesh'2009DoomMonstersSM.DemonSpawnSphere'
@@ -294,7 +291,7 @@ defaultproperties
          LifetimeRange=(Max=5.000000)
          InitialDelayRange=(Min=0.700000,Max=0.800000)
      End Object
-     Emitters(9)=MeshEmitter'KFBossSquad.BossDemonSpawnEx.MeshEmitter0'
+     Emitters(9)=MeshEmitter'KFBossSquadSpawnFx.BossDemonSpawnEx.MeshEmitter0'
 
      bAlwaysRelevant=True
 }

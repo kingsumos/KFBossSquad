@@ -19,8 +19,8 @@ var config string BossTimeSong;
 var config string BossTimeIntroSong;
 var config bool bEnableGodMode;
 var config bool bEnableLifeBoost;
-var int BossSpawnMaxFails;
 
+var int BossSpawnMaxFails;
 var bool bBossSquadRequested;
 var float CanKillGuardTime;
 var float BonusStageEndTime;
@@ -1271,8 +1271,15 @@ function SetMidBossSquad()
 function MidBossAddSquad()
 {
 	if( NextNewSpawnSquad.Length > 0 )
-		if( SpawnMidBoss( NextNewSpawnSquad[0], True ) )
-			NextNewSpawnSquad.Remove(0, 1);
+	{
+	    if (Class'KFBossSquad'.Default.bEnableSpawnFx)
+		{
+			if( SpawnMidBoss( NextNewSpawnSquad[0], True ) )
+				NextNewSpawnSquad.Remove(0, 1);
+		}
+		else
+			NewAddSquad(True);
+	}
 }
 
 function MidBossAddMonsterSuccess(SumoSPMonster MO)
@@ -1306,10 +1313,17 @@ final function bool SpawnMidBoss( SumoSPMonster MO, bool bNotify )
 	local int j;
 	local VolumeColTester Tst;
     local bool bResult;
-    local BossDemonSpawnEx BDS;
+    local SumoSpawnFx BDS;
 	local Controller C;
 	local array<Controller> CL;
     local float Dist;
+    local Class<SumoSpawnFx> SpawnFxClass;
+
+    SpawnFxClass = Class<SumoSpawnFx>(DynamicLoadObject(Class'KFBossSquad'.Default.SpawnFx,Class'Class'));
+	if( SpawnFxClass==None )
+	{
+		log("FATAL ERROR: SpawnFx '"$Class'KFBossSquad'.Default.SpawnFx$"' not found");
+	}
 
     // Find spawn locations close to players
 	for( C=Level.ControllerList; C!=None; C=C.NextController )
@@ -1341,7 +1355,7 @@ final function bool SpawnMidBoss( SumoSPMonster MO, bool bNotify )
 		// Try twice..
 		if( TestSpot(Tst,N.Location,MO.MonsterClass) || TestSpot(Tst,N.Location+vect(0,0,1)*(MO.MonsterClass.Default.CollisionHeight-N.CollisionHeight),MO.MonsterClass) )
 		{
-            BDS = Spawn(Class'BossDemonSpawnEx',,,Tst.Location,GetRandDir());
+            BDS = Spawn(SpawnFxClass,,,Tst.Location,GetRandDir());
             if( BDS != None )
 			{
 				BDS.MO = MO;
