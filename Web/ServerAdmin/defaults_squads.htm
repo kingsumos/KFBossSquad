@@ -3,8 +3,8 @@
   <tr><td colspan="15" class="ttitle">Wave:&nbsp;<%Wave%></td></tr>
   <form method="post" action="<%PostActionMaxMonsters%>" onsubmit="return validateGeneral(this);">
    <input type="hidden" name="WaveNum" value="<%WaveNum%>">
-   <tr><td colspan="15">Wave&nbsp;max&nbsp;monsters:&nbsp;<input class=textbox type="text" name="WaveMaxMonsters" Value="<%WaveMaxMonsters%>" size="3" maxlength="3"</td></tr>
-   <tr><td colspan="15">Sequential&nbsp;squads:&nbsp;<input type="checkbox" name="SequentialSquadSpawn" Value="True" <%SequentialSquadSpawn%>></td></tr>
+   <tr><td colspan="15"><span class="location" title="This value is being used to calculate the total number of monsters per wave.&#013;The number of monsters per wave is based on the game length and the number of players.">Number&nbsp;of&nbsp;monsters:&nbsp;</span><input class=textbox type="text" name="WaveMaxMonsters" Value="<%WaveMaxMonsters%>" size="3" maxlength="3"</td></tr>
+   <tr><td colspan="15"><span class="location" title="Squads are spawned sequentially according to the order below. Leave this flag unchecked to spawn squads in a random basis.">Sequential&nbsp;squads:&nbsp;</span><input type="checkbox" name="SequentialSquadSpawn" Value="True" <%SequentialSquadSpawn%>></td></tr>
    <tr><td colspan="15"><input class="button" type="Submit" name="Update" Value="Update"></td></tr>
   </form>
  </table>

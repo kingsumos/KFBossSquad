@@ -6,6 +6,7 @@ var config int NumPlayersScaleLock; // Scales the health of monsters by up to X 
 var config bool bDebug;
 var config string SpawnFx;
 var config bool bEnableSpawnFx;
+var config int WaveMaxMonsters;
 
 var config int BonusStageTime;
 var config int BonusStageCash;
@@ -957,6 +958,7 @@ static function FillPlayInfo(PlayInfo PlayInfo)
     PlayInfo.AddSetting(default.GroupName,"bEnableSpawnFx","Boss Time monster teleport (enabling requires restart)",1,0,"Check");
     PlayInfo.AddSetting(default.GroupName,"bDebug","Verbose logging",1,0,"Check");
     PlayInfo.AddSetting(default.GroupName,"NumPlayersScaleLock","Number of players limit used for monster scaling",1,0,"Text","3;3:32");
+    PlayInfo.AddSetting(default.GroupName,"WaveMaxMonsters","Maximum number of monsters per wave",1,0,"Text","5;0:10000");
     PlayInfo.AddSetting(default.GroupName,"BonusStageTime","Bonus Stage time",1,0,"Text","3;10:999");
     PlayInfo.AddSetting(default.GroupName,"BonusStageCash","Bonus Stage award cash",1,0,"Text","6;0:100000");
     PlayInfo.AddSetting(default.GroupName,"BonusStageNumMonsters","Bonus Stage number of monsters",1,0,"Text","5;0:10000");
@@ -976,6 +978,7 @@ static event string GetDescriptionText(string PropName)
         case "bEnableSpawnFx":         return "Monsters are teleported next to players during Boss Time (files from Doom3 mutator are required).";
         case "bDebug":                 return "You can enable verbose logging to help troubleshoot technical problems";
         case "NumPlayersScaleLock":    return "Monsters are scaled (health/difficulty/speed) by up to this amount of number of players.";
+        case "WaveMaxMonsters":        return "Maximum number of monsters per wave.";
         case "BonusStageTime":         return "Maximum duration time of the bonus stage (can end early if all speciments are killed).";
         case "BonusStageCash":         return "Bonus Stage award cash for the top killer.";
         case "BonusStageNumMonsters":  return "Total number of specimens during bonus stage.";
@@ -996,6 +999,7 @@ defaultproperties
     NumPlayersScaleLock=10
     SpawnFx="KFBossSquadSpawnFx.BossDemonSpawnEx"
     bEnableSpawnFx=False
+    WaveMaxMonsters=800
 
     BonusStageTime=120
     BonusStageCash=10000

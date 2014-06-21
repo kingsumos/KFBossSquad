@@ -868,7 +868,7 @@ function SetupWave()
 
     NewMaxMonsters = NewMaxMonsters * DifficultyMod * NumPlayersMod;
 
-    TotalMaxMonsters = Clamp(NewMaxMonsters,5,800);  //11, MAX 800, MIN 5
+    TotalMaxMonsters = Clamp(NewMaxMonsters,1,Class'KFBossSquad'.Default.WaveMaxMonsters);
 
     MaxMonsters = Clamp(TotalMaxMonsters,5,MaxZombiesOnce);
     //log("****** "$MaxMonsters$" Max at once!");
