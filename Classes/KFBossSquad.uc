@@ -7,6 +7,17 @@ var config bool bDebug;
 var config string SpawnFx;
 var config bool bEnableSpawnFx;
 
+var config int BonusStageTime;
+var config int BonusStageCash;
+var config int BonusStageNumMonsters;
+var config int BonusStageMaxMonsters;
+var config string BonusStageSong;
+var config string BonusStageSongPackage;
+var config string BossTimeSong;
+var config string BossTimeIntroSong;
+var config bool bEnableGodMode;
+var config bool bEnableLifeBoost;
+
 var BSGameType GT;
 var array<KFMonster> PendingMonsters;
 var array<string> CustomMonstersSpawn;
@@ -111,7 +122,7 @@ function Timer()
 
 	if( GT.bBossSquadRequested )
 	{
-		GT.MaxMonsters=GT.BonusStageMaxMonsters;
+		GT.MaxMonsters=BonusStageMaxMonsters;
 		bInitMaxMonsters=false;
 	}
 	else
@@ -938,12 +949,64 @@ simulated function int GetMonstersStringSize()
     return Len(Monsters_0) + Len(Monsters_1) + Len(Monsters_2) + Len(Monsters_3) + Len(Monsters_4) + Len(Monsters_5) + Len(Monsters_6) + Len(Monsters_7) + Len(Monsters_8) + Len(Monsters_9) + Len(Monsters_10) + Len(Monsters_11) + Len(Monsters_12) + Len(Monsters_13) + Len(Monsters_14);
 }
 
+
+
+static function FillPlayInfo(PlayInfo PlayInfo)
+{
+    Super.FillPlayInfo(PlayInfo);
+    PlayInfo.AddSetting(default.GroupName,"bEnableSpawnFx","Boss Time monster teleport (enabling requires restart)",1,0,"Check");
+    PlayInfo.AddSetting(default.GroupName,"bDebug","Verbose logging",1,0,"Check");
+    PlayInfo.AddSetting(default.GroupName,"NumPlayersScaleLock","Number of players limit used for monster scaling",1,0,"Text","3;3:32");
+    PlayInfo.AddSetting(default.GroupName,"BonusStageTime","Bonus Stage time",1,0,"Text","3;10:999");
+    PlayInfo.AddSetting(default.GroupName,"BonusStageCash","Bonus Stage award cash",1,0,"Text","6;0:100000");
+    PlayInfo.AddSetting(default.GroupName,"BonusStageNumMonsters","Bonus Stage number of monsters",1,0,"Text","5;0:10000");
+    PlayInfo.AddSetting(default.GroupName,"BonusStageMaxMonsters","Bonus Stage max monsters at once",1,0,"Text","3;0:100");
+    PlayInfo.AddSetting(default.GroupName,"BonusStageSong","Bonus Stage music",1,0,"Text","128");
+    PlayInfo.AddSetting(default.GroupName,"BonusStageSongPackage","Bonus Stage music package",1,0,"Text","128");
+    PlayInfo.AddSetting(default.GroupName,"BossTimeSong","Bonus Time music",1,0,"Text","128");
+    PlayInfo.AddSetting(default.GroupName,"BossTimeIntroSong","Bonus Time intro music",1,0,"Text","128");
+    PlayInfo.AddSetting(default.GroupName,"bEnableGodMode","Bonus stage god mode",1,0,"Check");
+    PlayInfo.AddSetting(default.GroupName,"bEnableLifeBoost","Bonus stage life boost",1,0,"Check");
+}
+
+static event string GetDescriptionText(string PropName)
+{
+    switch (PropName)
+    {
+        case "bEnableSpawnFx":         return "Monsters are teleported next to players during Boss Time (files from Doom3 mutator are required).";
+        case "bDebug":                 return "You can enable verbose logging to help troubleshoot technical problems";
+        case "NumPlayersScaleLock":    return "Monsters are scaled (health/difficulty/speed) by up to this amount of number of players.";
+        case "BonusStageTime":         return "Maximum duration time of the bonus stage (can end early if all speciments are killed).";
+        case "BonusStageCash":         return "Bonus Stage award cash for the top killer.";
+        case "BonusStageNumMonsters":  return "Total number of specimens during bonus stage.";
+        case "BonusStageMaxMonsters":  return "How many specimens will be active at any one time.";
+        case "BonusStageSong":         return "Which .ogg music file will be played during Bonus Stage (filename without extension, see Music folder).";
+        case "BonusStageSongPackage":  return "Use a sound package to customize the Bonus Stage music (i.e. 'PackageName.MusicName' - the server will upload the music to the clients).";
+        case "BossTimeSong":           return "Which .ogg music file will be played during Boss Time.";
+        case "BossTimeIntroSong":      return "Intro music file (first 15 seconds of the Boss Time).";
+        case "bEnableGodMode":         return "God Mode is enabled during Bonus Stage.";
+        case "bEnableLifeBoost":       return "Life boost is enabled during Bonus Stage.";
+    }
+    return Super.GetDescriptionText(PropName);
+}
+
 defaultproperties
 {
     bDebug=False
     NumPlayersScaleLock=10
     SpawnFx="KFBossSquadSpawnFx.BossDemonSpawnEx"
     bEnableSpawnFx=False
+
+    BonusStageTime=120
+    BonusStageCash=10000
+    BonusStageNumMonsters=600
+    BonusStageMaxMonsters=64
+    BonusStageSong="KF_My_AK"
+    BonusStageSongPackage=""
+    BossTimeSong="KF_Abandon"
+    BossTimeIntroSong="KF_SurfaceTension"
+    bEnableGodMode=true
+    bEnableLifeBoost=true
 
     GroupName="KFBossSquad"
     FriendlyName="KFBossSquad"

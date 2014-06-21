@@ -16,9 +16,9 @@ function BeginPlay()
 {
 	PawnOwner = Pawn(Owner);
 	PlayerOwner = PlayerController(PawnOwner.Controller);
-    if (Class'BSGameType'.Default.bEnableLifeBoost)
+    if (Class'KFBossSquad'.Default.bEnableLifeBoost)
 		PawnOwner.Health = 500;
-    if (Class'BSGameType'.Default.bEnableGodMode)
+    if (Class'KFBossSquad'.Default.bEnableGodMode)
         PlayerOwner.bGodMode = true;
     else
     {
@@ -33,7 +33,7 @@ function Timer()
 	{
 		bHasInit = true;
 		InitTime = Level.TimeSeconds+15;
-        SetTimer(Class'BSGameType'.Default.BonusStageTime+15,false);
+        SetTimer(Class'KFBossSquad'.Default.BonusStageTime+15,false);
 		return;
 	}
 	Disable('Tick');
@@ -61,10 +61,10 @@ function Tick( float Delta )
 				M.TakeDamage(100,PawnOwner,PawnOwner.Location,vect(0,0,0),Class'DamageType');
 	}
 
-	if( PlayerOwner!=None && Class'BSGameType'.Default.bEnableGodMode)
+	if( PlayerOwner!=None && Class'KFBossSquad'.Default.bEnableGodMode)
 		PlayerOwner.bGodMode = true;
 
-	if( PawnOwner!=None && Class'BSGameType'.Default.bEnableLifeBoost)
+	if( PawnOwner!=None && Class'KFBossSquad'.Default.bEnableLifeBoost)
 		PawnOwner.Health = 500;
 }
 final function bool IsTouching( Actor A )
@@ -79,9 +79,9 @@ final function bool IsTouching( Actor A )
 }
 function Destroyed()
 {
-	if( PlayerOwner!=None && Class'BSGameType'.Default.bEnableGodMode )
+	if( PlayerOwner!=None && Class'KFBossSquad'.Default.bEnableGodMode )
 		PlayerOwner.bGodMode = false;
-	if( PawnOwner!=None && PawnOwner.Health>100 && Class'BSGameType'.Default.bEnableLifeBoost )
+	if( PawnOwner!=None && PawnOwner.Health>100 && Class'KFBossSquad'.Default.bEnableLifeBoost )
 		PawnOwner.Health = 100;
 }
 
