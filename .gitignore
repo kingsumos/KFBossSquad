@@ -1,2 +1,5 @@
 KFBossSquad-*.zip
-System/*
+KFBossSquad.v*
+System/KFBossSquad.u
+System/KFBossSquad.ucl
+System/KFBossSquadSpawnFx.u

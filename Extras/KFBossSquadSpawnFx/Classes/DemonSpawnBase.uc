@@ -1,4 +1,4 @@
-class DemonSpawnBase extends DoomEmitter;
+class DemonSpawnBase extends SumoSpawnFx;
 
 var Sound SpawnSound;
 var float TeleportInTime;

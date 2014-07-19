@@ -9,18 +9,7 @@ struct BSScore {
     var int Kills;
 };
 
-var config int BonusStageTime;
-var config int BonusStageCash;
-var config int BonusStageNumMonsters;
-var config int BonusStageMaxMonsters;
-var config string BonusStageSong;
-var config string BonusStageSongPackage;
-var config string BossTimeSong;
-var config string BossTimeIntroSong;
-var config bool bEnableGodMode;
-var config bool bEnableLifeBoost;
 var int BossSpawnMaxFails;
-
 var bool bBossSquadRequested;
 var float CanKillGuardTime;
 var float BonusStageEndTime;
@@ -394,7 +383,7 @@ State MatchInProgress
                         BonusStageStartTime += 9999;
                         for ( C = Level.ControllerList; C != None; C = C.NextController )
                             if( KFPlayerController(C) != None )
-                                KFPlayerController(C).ClientSetMusic(BossTimeSong,MTRAN_FastFade);
+                                KFPlayerController(C).ClientSetMusic(Class'KFBossSquad'.Default.BossTimeSong,MTRAN_FastFade);
                     }                
                 }
             }
@@ -432,7 +421,7 @@ State MatchInProgress
 							NextNewSpawnSquad.Length = 0;
                             NextMonsterTime = Level.TimeSeconds + 15;
                             BonusStageStartTime = NextMonsterTime;
-                            BonusStageEndTime = NextMonsterTime + BonusStageTime;
+                            BonusStageEndTime = NextMonsterTime + Class'KFBossSquad'.Default.BonusStageTime;
                             BonusStageEndWarnTime = BonusStageEndTime - 10;
                             BossSpawnMaxFails = 0;
 
@@ -442,7 +431,7 @@ State MatchInProgress
                             if( MidBossSetup.BonusStage )
 							{
                                 SScore.Remove(0, SScore.Length);
-                                TotalMaxMonsters = BonusStageNumMonsters;
+                                TotalMaxMonsters = Class'KFBossSquad'.Default.BonusStageNumMonsters;
 							}
                             else
                             {
@@ -453,7 +442,7 @@ State MatchInProgress
 
                             if ( TotalMaxMonsters > 0 )
                             {
-                                if( MidBossSetup.BonusStage && BonusStageSongPackage != "" )
+                                if( MidBossSetup.BonusStage && Class'KFBossSquad'.Default.BonusStageSongPackage != "" )
                                 {
                                     Spawn(class'BonusStageMusic');
                                     Spawn(class'BonusStageMusic');    // Hack: 2x AmbientSound volume
@@ -470,16 +459,16 @@ State MatchInProgress
                                             S.PlayerID = C.PlayerReplicationInfo.PlayerID;
                                             S.Kills = C.PlayerReplicationInfo.Kills;
                                             SScore[SScore.Length] = S;
-                                            if(BonusStageSong == "")
+                                            if(Class'KFBossSquad'.Default.BonusStageSong == "")
                                                 KFPlayerController(C).NetStopMusic(5.0f);
                                             else
-                                                KFPlayerController(C).ClientSetMusic(BonusStageSong,MTRAN_FastFade);
+                                                KFPlayerController(C).ClientSetMusic(Class'KFBossSquad'.Default.BonusStageSong,MTRAN_FastFade);
                                             KFPlayerController(C).ReceiveLocalizedMessage(Class'BossSquadMessage',1);
                                             C.Pawn.Spawn(Class'BonusStageClient',C.Pawn);
                                         }
                                         else
                                         {
-                                            KFPlayerController(C).ClientSetMusic(BossTimeIntroSong,MTRAN_Instant);
+                                            KFPlayerController(C).ClientSetMusic(Class'KFBossSquad'.Default.BossTimeIntroSong,MTRAN_Instant);
                                             KFPlayerController(C).ReceiveLocalizedMessage(Class'BossSquadMessage',0);
                                         }
                                     }
@@ -879,7 +868,7 @@ function SetupWave()
 
     NewMaxMonsters = NewMaxMonsters * DifficultyMod * NumPlayersMod;
 
-    TotalMaxMonsters = Clamp(NewMaxMonsters,5,800);  //11, MAX 800, MIN 5
+    TotalMaxMonsters = Clamp(NewMaxMonsters,1,Class'KFBossSquad'.Default.WaveMaxMonsters);
 
     MaxMonsters = Clamp(TotalMaxMonsters,5,MaxZombiesOnce);
     //log("****** "$MaxMonsters$" Max at once!");
@@ -1271,8 +1260,15 @@ function SetMidBossSquad()
 function MidBossAddSquad()
 {
 	if( NextNewSpawnSquad.Length > 0 )
-		if( SpawnMidBoss( NextNewSpawnSquad[0], True ) )
-			NextNewSpawnSquad.Remove(0, 1);
+	{
+	    if (Class'KFBossSquad'.Default.bEnableSpawnFx)
+		{
+			if( SpawnMidBoss( NextNewSpawnSquad[0], True ) )
+				NextNewSpawnSquad.Remove(0, 1);
+		}
+		else
+			NewAddSquad(True);
+	}
 }
 
 function MidBossAddMonsterSuccess(SumoSPMonster MO)
@@ -1306,10 +1302,17 @@ final function bool SpawnMidBoss( SumoSPMonster MO, bool bNotify )
 	local int j;
 	local VolumeColTester Tst;
     local bool bResult;
-    local BossDemonSpawnEx BDS;
+    local SumoSpawnFx BDS;
 	local Controller C;
 	local array<Controller> CL;
     local float Dist;
+    local Class<SumoSpawnFx> SpawnFxClass;
+
+    SpawnFxClass = Class<SumoSpawnFx>(DynamicLoadObject(Class'KFBossSquad'.Default.SpawnFx,Class'Class'));
+	if( SpawnFxClass==None )
+	{
+		log("FATAL ERROR: SpawnFx '"$Class'KFBossSquad'.Default.SpawnFx$"' not found");
+	}
 
     // Find spawn locations close to players
 	for( C=Level.ControllerList; C!=None; C=C.NextController )
@@ -1341,7 +1344,7 @@ final function bool SpawnMidBoss( SumoSPMonster MO, bool bNotify )
 		// Try twice..
 		if( TestSpot(Tst,N.Location,MO.MonsterClass) || TestSpot(Tst,N.Location+vect(0,0,1)*(MO.MonsterClass.Default.CollisionHeight-N.CollisionHeight),MO.MonsterClass) )
 		{
-            BDS = Spawn(Class'BossDemonSpawnEx',,,Tst.Location,GetRandDir());
+            BDS = Spawn(SpawnFxClass,,,Tst.Location,GetRandDir());
             if( BDS != None )
 			{
 				BDS.MO = MO;
@@ -1431,13 +1434,13 @@ function BSAwards()
                 {
                     if( C.PlayerReplicationInfo.PlayerID == D.PlayerReplicationInfo.PlayerID )
                     {
-                        KFPlayerController(C).ReceiveLocalizedMessage(Class'BossSquadMessage',BonusStageCash,C.PlayerReplicationInfo,C.PlayerReplicationInfo);
+                        KFPlayerController(C).ReceiveLocalizedMessage(Class'BossSquadMessage',Class'KFBossSquad'.Default.BonusStageCash,C.PlayerReplicationInfo,C.PlayerReplicationInfo);
                         C.Pawn.PlaySound( Class'CashPickup'.Default.PickupSound,SLOT_None,2);
-                        C.PlayerReplicationInfo.Score += BonusStageCash;
+                        C.PlayerReplicationInfo.Score += Class'KFBossSquad'.Default.BonusStageCash;
                     }
                     else
                     {
-                        KFPlayerController(C).ReceiveLocalizedMessage(Class'BossSquadMessage',BonusStageCash,C.PlayerReplicationInfo,D.PlayerReplicationInfo);
+                        KFPlayerController(C).ReceiveLocalizedMessage(Class'BossSquadMessage',Class'KFBossSquad'.Default.BonusStageCash,C.PlayerReplicationInfo,D.PlayerReplicationInfo);
                     }
                 }
             }
@@ -1605,17 +1608,6 @@ event InitGame( string Options, out string Error )
 
 defaultproperties
 {
-    BonusStageTime=120
-    BonusStageCash=10000
-    BonusStageNumMonsters=600
-    BonusStageMaxMonsters=64
-    BonusStageSong="KF_My_AK"
-    BonusStageSongPackage=""
-    BossTimeSong="KF_Abandon"
-    BossTimeIntroSong="KF_SurfaceTension"
-    bEnableGodMode=true
-    bEnableLifeBoost=true
     GameName="Boss Squads"
-    bUseZEDThreatAssessment=True
 }
 

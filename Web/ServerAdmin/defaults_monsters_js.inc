@@ -133,7 +133,7 @@ function validateGeneral(oForm)
 				}
 			}
 			if( valueInt === 0 ) {
-				alert("ERROR: invalid Wave max monsters value: " + value);
+				alert("ERROR: invalid Number of monsters value: " + value);
 				return false;
 			}
 		}

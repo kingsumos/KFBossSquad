@@ -14,9 +14,9 @@ simulated function Timer()
 	if( !bInit )
 	{
 		bInit = true;
-        if(Class'BSGameType'.Default.BonusStageSongPackage != "")
+        if(Class'KFBossSquad'.Default.BonusStageSongPackage != "")
         {
-            mySong = Sound(DynamicLoadObject(Class'BSGameType'.Default.BonusStageSongPackage, class'Sound', True));
+            mySong = Sound(DynamicLoadObject(Class'KFBossSquad'.Default.BonusStageSongPackage, class'Sound', True));
             AmbientSound = mySong;
         }
         SetTimer(1,True);
