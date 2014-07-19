@@ -7,6 +7,10 @@ var config bool bDebug;
 var config string SpawnFx;
 var config bool bEnableSpawnFx;
 var config int WaveMaxMonsters;
+var config bool bEnableDynamicMaxZombiesOnce;
+var config int ZombiesOnceMin;
+var config int ZombiesOnceMax;
+var config int ZombiesOnceStep;
 
 var config int BonusStageTime;
 var config int BonusStageCash;
@@ -121,6 +125,19 @@ function Timer()
             NumEnemies++;
     CachedNumEnemies = Min(NumEnemies,NumPlayersScaleLock);
 
+	if( bEnableDynamicMaxZombiesOnce )
+	{
+		if( GT.bBossSquadRequested )
+		{
+			GT.MaxMonsters=BonusStageMaxMonsters;
+		}
+		else if( GT.bWaveInProgress || GT.bWaveBossInProgress )
+		{
+			GT.MaxMonsters=Clamp(ZombiesOnceMin+((CachedNumEnemies-1)*ZombiesOnceStep),ZombiesOnceMin,ZombiesOnceMax);
+		}
+		return;
+	}
+
 	if( GT.bBossSquadRequested )
 	{
 		GT.MaxMonsters=BonusStageMaxMonsters;
@@ -158,7 +175,7 @@ function Tick( float DeltaTime )
 				MO = NewGetMonster( CustomMonstersSpawn[i] );
 				if( MO.ShortName == ShortName )
 				{
-					CustomMonstersSpawn.Remove(0,1);
+					CustomMonstersSpawn.Remove(i,1);
 					bFound = True;
 					break;
 				}
@@ -959,6 +976,10 @@ static function FillPlayInfo(PlayInfo PlayInfo)
     PlayInfo.AddSetting(default.GroupName,"bDebug","Verbose logging",1,0,"Check");
     PlayInfo.AddSetting(default.GroupName,"NumPlayersScaleLock","Number of players limit used for monster scaling",1,0,"Text","3;3:32");
     PlayInfo.AddSetting(default.GroupName,"WaveMaxMonsters","Maximum number of monsters per wave",1,0,"Text","5;0:10000");
+    PlayInfo.AddSetting(default.GroupName,"bEnableDynamicMaxZombiesOnce","Enable Dynamic MaxZombiesOnce",1,0,"Check");
+    PlayInfo.AddSetting(default.GroupName,"ZombiesOnceMin","Dynamic MaxZombiesOnce: minimum value",1,0,"Text","3;1:256");
+    PlayInfo.AddSetting(default.GroupName,"ZombiesOnceMax","Dynamic MaxZombiesOnce: maximum value",1,0,"Text","3;1:256");
+    PlayInfo.AddSetting(default.GroupName,"ZombiesOnceStep","Dynamic MaxZombiesOnce: per player increasing value",1,0,"Text","3;0:256");
     PlayInfo.AddSetting(default.GroupName,"BonusStageTime","Bonus Stage time",1,0,"Text","3;10:999");
     PlayInfo.AddSetting(default.GroupName,"BonusStageCash","Bonus Stage award cash",1,0,"Text","6;0:100000");
     PlayInfo.AddSetting(default.GroupName,"BonusStageNumMonsters","Bonus Stage number of monsters",1,0,"Text","5;0:10000");
@@ -979,6 +1000,10 @@ static event string GetDescriptionText(string PropName)
         case "bDebug":                 return "You can enable verbose logging to help troubleshoot technical problems";
         case "NumPlayersScaleLock":    return "Monsters are scaled (health/difficulty/speed) by up to this amount of number of players.";
         case "WaveMaxMonsters":        return "Maximum number of monsters per wave.";
+        case "bEnableDynamicMaxZombiesOnce": return "Enable dynamic MaxZombiesOnce.";
+        case "ZombiesOnceMin":         return "If there is only one alive player the MaxZombiesOnce will be set to this value.";
+        case "ZombiesOnceMax":         return "This is the maximum value MaxZombiesOnce can reach.";
+        case "ZombiesOnceStep":        return "For each alive player the MaxZombiesOnce is increased by this value.";
         case "BonusStageTime":         return "Maximum duration time of the bonus stage (can end early if all speciments are killed).";
         case "BonusStageCash":         return "Bonus Stage award cash for the top killer.";
         case "BonusStageNumMonsters":  return "Total number of specimens during bonus stage.";
@@ -1000,6 +1025,11 @@ defaultproperties
     SpawnFx="KFBossSquadSpawnFx.BossDemonSpawnEx"
     bEnableSpawnFx=False
     WaveMaxMonsters=800
+
+    bEnableDynamicMaxZombiesOnce=False
+    ZombiesOnceMin=32
+    ZombiesOnceMax=64
+    ZombiesOnceStep=4
 
     BonusStageTime=120
     BonusStageCash=10000
